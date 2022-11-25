@@ -1,0 +1,53 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Given an array of integers arr, you are initially positioned at the first index of the array.
+
+In one step you can jump from index i to index:
+
+i + 1 where: i + 1 < arr.length.
+i - 1 where: i - 1 >= 0.
+j where: arr[i] == arr[j] and i != j.
+Return the minimum number of steps to reach the last index of the array.
+
+Notice that you can not jump outside of the array at any time.
+
+ /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+ class Solution {
+public:
+    int minJumps(vector<int>& arr) {
+        unordered_map<int,vector<int>> map;
+        int n = arr.size();
+        for(int i=0;i<n;i++){
+            map[arr[i]].push_back(i);
+        }
+        
+        unordered_set<int> b;
+        queue<int> q;
+        q.push(0);
+        int ans=0;
+        while(!q.empty()){
+            ans++;
+            int x = q.size();
+            for(int i=0;i<x;i++){
+                int top = q.front();
+                if(top==n-1)
+                    return ans-1;
+                q.pop();
+                if(top<0 or top>=n or b.count(top)){
+                    continue;
+                }
+                for(auto it:map[arr[top]]){
+                    if(it!=top and !b.count(it))
+                        q.push(it);
+                }
+                
+                q.push(top+1);
+                q.push(top-1);
+                b.insert(top);
+                map.erase(arr[top]);
+            }
+        }
+        return ans-1;
+    }
+};
